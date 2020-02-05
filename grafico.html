@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Grafico SIlo</title>
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+        <script src="axios.min.js"></script>
+        <script src="app.js"></script>
+
+    </head>
+    <body onload="start()">
+
+        <div id="container-volume" style="height: 300px;"></div>
+        <br>
+        <div id="container-umidade" style="height: 300px;"></div>
+        <br>
+        <div id="container-temperatura" style="height: 300px;"></div>
+
+    </body>
+
+    <script>
+
+        var datas = [];
+        var temperaturas = [];
+        var volumes = [];
+        var umidades = [];
+
+        function start() {
+
+            getSilos(
+                function (silos) {
+                    baixou(silos)
+                },
+                function (erro) {
+                    alert(erro);
+                }
+            );
+        }
+
+        function baixou(silos) {
+            for (var i = 0; i < silos.length; i++){
+                var silo = silos[i];
+
+                temperaturas.push(silo.temperature);
+                volumes.push(silo.volume);
+                umidades.push(silo.humidity);
+
+                datas.push(silo.date);
+            }
+
+            graficoVolume();
+            graficoTemperatura();
+            graficoUmidade();
+        }
+
+        function graficoVolume() {
+            Highcharts.chart('container-volume', {
+                chart: {
+                    type: 'line'
+                },
+                title: {
+                    text: 'Histórico Silo'
+                },
+                xAxis: {
+                    categories: datas
+                },
+                series: [
+                    {
+                        name: 'Volume (m³)',
+                        data: volumes
+                    }
+                ]
+            });
+        }
+
+        function graficoUmidade() {
+            Highcharts.chart('container-umidade', {
+                chart: {
+                    type: 'line'
+                },
+                title: {
+                    text: 'Histórico Silo - Umidade'
+                },
+                xAxis: {
+                    categories: datas
+                },
+                series: [
+                    {
+                        name: 'Umidade (g/Kg)',
+                        data: umidades
+                    }
+                ]
+            });
+        }
+
+        function graficoTemperatura() {
+            Highcharts.chart('container-temperatura', {
+                chart: {
+                    type: 'line'
+                },
+                title: {
+                    text: 'Histórico Silo - Temperatura'
+                },
+                xAxis: {
+                    categories: datas
+                },
+                series: [
+                    {
+                        name: 'Temperatura (Celsius)',
+                        data: temperaturas
+                    }
+                ]
+            });
+        }
+
+    </script>
+</html>
